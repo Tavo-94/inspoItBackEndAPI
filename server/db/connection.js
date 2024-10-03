@@ -1,27 +1,18 @@
-import { MongoClient, ServerApiVersion } from "mongodb";
+import mongoose from "mongoose";
 import 'dotenv/config';
+import e from "express";
 
-const MONGO_URI_REMOTO = process.env.MONGO_URI_REMOTO;
+const MONGO_URI_LOCAL = process.env.MONGO_URI_LOCAL;
 
-const client = new MongoClient(MONGO_URI_REMOTO, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
+export const connectToDb = async () => {
 
-try {
-  await client.connect();
+    try {
+        await mongoose.connect(MONGO_URI_LOCAL);
+    } catch (error) {
+        console.log(error);
+    }
 
-  await client.db("gustavomph").command({ ping: 1 });
-
-  console.log("Connected successfully to MongoDB!");
-} catch (error) {
-  console.error(error);
-}
-
-let db = client.db("sample_airbnb");
+    console.log("Connected successfully to MongoDB!");
+};
 
 
-export default db;
