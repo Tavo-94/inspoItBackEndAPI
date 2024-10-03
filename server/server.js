@@ -5,16 +5,9 @@ import {connectToDb} from './db/connection.js';
 import userRouter from './routers/usuarios/user.routes.js';
 import morgan from "morgan";
 
-//test
 //constantes de servidor
 const app = express();
 const port = process.env.PORT; 
-
-//TODO extraer el path del origen a las variables de entorno
-// const corsOptions = {
-//     origin: "http://localhost:5000",
-//     optionSuccessStatus: 200,
-// };
 
 //middlewares
 app.use(morgan('dev'));
