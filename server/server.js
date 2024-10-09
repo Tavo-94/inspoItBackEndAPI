@@ -4,6 +4,7 @@ import cors from "cors";
 import {connectToDb} from './db/connection.js';
 import userRouter from './routers/usuarios/user.routes.js';
 import morgan from "morgan";
+import loginRoutes from "./routers/login.routes.js";
 
 //constantes de servidor
 const app = express();
@@ -18,7 +19,7 @@ app.use(express.json());
 
 //rutas
  app.use("/user", userRouter);
-
+ app.use("/login", loginRoutes)
 
 //iniciar servidor
 
