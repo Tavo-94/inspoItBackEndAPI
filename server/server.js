@@ -6,6 +6,7 @@ import userRouter from './routers/usuarios/user.routes.js';
 import morgan from "morgan";
 import loginRoutes from "./routers/login.routes.js";
 import jsonwebtoken from "jsonwebtoken";
+import tokenVerify from "./routers/tokenValidator.js";
 
 //constantes de servidor
 const app = express();
@@ -45,6 +46,7 @@ app.post('/auth', (req, res)=>{
 //rutas
  app.use("/user", userRouter);
  app.use("/login", loginRoutes)
+ app.use("/token", tokenVerify)
 
 //iniciar servidor
 
