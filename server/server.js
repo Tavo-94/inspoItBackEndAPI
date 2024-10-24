@@ -1,24 +1,23 @@
 import express from "express";
-import 'dotenv/config';
+import "dotenv/config";
 import cors from "cors";
-import {connectToDb} from './db/connection.js';
-import userRouter from './routers/usuarios/user.routes.js';
+import { connectToDb } from "./db/connection.js";
+import userRouter from "./routers/usuarios/user.routes.js";
 import morgan from "morgan";
+import proyectRouter from "./routers/usuarios/proyect.routes.js";
 
 //constantes de servidor
 const app = express();
-const port = process.env.PORT; 
+const port = process.env.PORT;
 
 //middlewares
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());
 
-
-
 //rutas
- app.use("/user", userRouter);
-
+app.use("/user", userRouter);
+app.use("/proyect", proyectRouter);
 
 //iniciar servidor
 
@@ -26,8 +25,8 @@ app.use(express.json());
 await connectToDb();
 
 app.listen(port, (err) => {
-    if (err) {
-        throw new Error(`No se pudo levantar el servidor -> ${err}`);
-    }
-    console.log(`Example app listening at http://localhost:${port}`);
-  });
+  if (err) {
+    throw new Error(`No se pudo levantar el servidor -> ${err}`);
+  }
+  console.log(`Example app listening at http://localhost:${port}`);
+});
