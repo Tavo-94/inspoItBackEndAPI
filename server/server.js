@@ -1,20 +1,21 @@
 import express from "express";
-import 'dotenv/config';
+import "dotenv/config";
 import cors from "cors";
-import {connectToDb} from './db/connection.js';
-import userRouter from './routers/usuarios/user.routes.js';
+import { connectToDb } from "./db/connection.js";
+import userRouter from "./routers/usuarios/user.routes.js";
 import morgan from "morgan";
+import proyectRouter from "./routers/usuarios/proyect.routes.js";
 import loginRoutes from "./routers/login.routes.js";
 import jsonwebtoken from "jsonwebtoken";
 import tokenVerify from "./routers/tokenValidator.js";
 
 //constantes de servidor
 const app = express();
-const port = process.env.PORT; 
+const port = process.env.PORT;
 const key = process.env.JWT_SECRET
 
 //middlewares
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());
 
@@ -44,8 +45,9 @@ app.post('/auth', (req, res)=>{
 
 
 //rutas
- app.use("/user", userRouter);
- app.use("/login", loginRoutes)
+app.use("/user", userRouter);
+app.use("/proyect", proyectRouter); 
+app.use("/login", loginRoutes)
  app.use("/token", tokenVerify)
 
 //iniciar servidor
@@ -54,8 +56,8 @@ app.post('/auth', (req, res)=>{
 await connectToDb();
 
 app.listen(port, (err) => {
-    if (err) {
-        throw new Error(`No se pudo levantar el servidor -> ${err}`);
-    }
-    console.log(`Example app listening at http://localhost:${port}`);
-  });
+  if (err) {
+    throw new Error(`No se pudo levantar el servidor -> ${err}`);
+  }
+  console.log(`Example app listening at http://localhost:${port}`);
+});
