@@ -1,4 +1,6 @@
 import userService from '../service/userService.js';
+//hasheo de contraseña
+import bcrypt from 'bcryptjs';
 
 //TODO en el controller solo validar que los datos recibidos son correctos
 
@@ -9,10 +11,11 @@ const createUser = async (req, res) => {
     try {
         
         const userData = req.body;
+        //hasheo de contraseña y modificacion antes de enviar a la DB
+        const hashPassword = await bcrypt.hash(userData.password, 10)
+        const newUser = {...userData, password: hashPassword}
 
-        console.log(userData);
-
-        const createdUser = await userService.createUser(userData);
+        const createdUser = await userService.createUser(newUser);
         res.status(201).json({
             success: true,
             message: "User created successfully",
