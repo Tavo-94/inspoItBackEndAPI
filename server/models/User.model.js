@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
-  name: {
+const usuarioSchema = new mongoose.Schema({
+  nombre: {
     type: String,
     trim: true,
     required: true,
@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  typeUser: {
+  tipo_usuario: {
     type: String,
     required: true,
   },
@@ -33,11 +33,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-  profileImage: {
+  imagen_perfil_url: {
     type: String,
     required: false,
   },
-  portadaImage: {
+  imagen_portada_url: {
     type: String,
     required: false,
   },
@@ -48,12 +48,12 @@ const userSchema = new mongoose.Schema({
   proyectos: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Proyect",
+      ref: "Proyecto",
     },
   ],
 });
 
 
 
-const User = mongoose.model("User", userSchema);
-export default User;
+const Usuario = mongoose.model("Usuario", usuarioSchema);
+export default Usuario;

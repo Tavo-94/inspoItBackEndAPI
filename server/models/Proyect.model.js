@@ -1,14 +1,14 @@
 import mongoose, { pluralize } from "mongoose";
-import User from "./User.model.js";
+import Usuario from "./User.model.js";
 
-const proyectSchema = new mongoose.Schema({
-  name: {
+const proyectoSchema = new mongoose.Schema({
+  nombre: {
     type: String,
     trim: true,
     required: true,
     minLength: 3,
   },
-  description: {
+  descripcion: {
     type: String,
     trim: true,
     required: true,
@@ -26,11 +26,11 @@ const proyectSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  tiempoDeDuracion: {
+  tiempo_duracion: {
     type: String,
     required: true,
   },
-  imagenes: {
+  imagenes_urls: {
     type: [String], // Array de URLs de imágenes
     required: false,
   },
@@ -42,20 +42,24 @@ const proyectSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  user: {
+  usuario: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "Usuario",
     required: true,
   },
 });
 
-proyectSchema.pre("findOneAndDelete", async function (next) {
+// middleware que se ejecuta antes de eliminar un proyecto
+// este middleware se encarga de eliminar el proyecto de la lista de proyectos
+// del usuario que lo creó
+// !se ejecuta antes de realizar la operacion de eliminar
+proyectoSchema.pre("findOneAndDelete", async function (next) {
   const proyect = await this.model.findOne(this.getQuery());
   if (!proyect) {
     return next();    
   }
 
-  await User.findByIdAndUpdate(proyect.user, {
+  await Usuario.findByIdAndUpdate(proyect.usuario, {
     $pull: {
       proyectos: proyect._id,
     }
@@ -64,9 +68,12 @@ proyectSchema.pre("findOneAndDelete", async function (next) {
   next();
 } )
 
-proyectSchema.post("save", async function (doc, next) {
+proyectoSchema.post("save", async function (doc, next) {
     try {
-      await User.findByIdAndUpdate(doc.user, {
+      // Actualiza el usuario para agregar el proyecto recién creado a su lista de proyectos
+      console.log(doc._id, "Post save,  oid del proyecto");
+      console.log(doc.usuario, "Post save, oid del usuario");
+      await Usuario.findByIdAndUpdate(doc.usuario, {
         $push: {
           proyectos: doc._id,
         },
@@ -75,10 +82,11 @@ proyectSchema.post("save", async function (doc, next) {
       next();
 
     } catch (error) {
+      // Maneja cualquier error que ocurra durante la actualización del usuario
       console.error("Error al agregar el proyecto al usuario:", error);
       next(error);
     }
 })
 
-const Proyect = mongoose.model("Proyect", proyectSchema);
-export default Proyect;
+const Proyecto = mongoose.model("Proyecto", proyectoSchema);
+export default Proyecto;
