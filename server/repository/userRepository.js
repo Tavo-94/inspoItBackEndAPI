@@ -7,11 +7,13 @@ const createUser = async (userData) => {
 }
 
 const getAllUsers = async () => {
-    return await User.find();
+    return await User.find().populate('proyectos');
 }
 
 const getUserById = async (id) => {
-    return await User.findById(id);
+    const userFromDb = await User.findById(id).populate('proyectos');
+    console.info(userFromDb);
+    return userFromDb;
 }
 
 const updateUser = async (id, userData) => {
