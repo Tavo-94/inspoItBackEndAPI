@@ -3,9 +3,10 @@ import proyectRepository from "../repository/proyectRepository.js";
 
 // Crear un nuevo proyecto
 const createProyect = async (req, res) => {
-  const proyectData = req.body;
+  const { fecha, estado = true, ...proyectData } = req.body; // asegura que `estado` esté en `true` si no se proporciona
+
   try {
-    const newProyect = await Proyect.create(proyectData);
+    const newProyect = await Proyect.create({ estado, ...proyectData });
     res.status(201).json(newProyect);
   } catch (error) {
     res.status(400).send({ message: "Error al crear un proyecto", error });
@@ -15,7 +16,7 @@ const createProyect = async (req, res) => {
 // Obtener todos los proyectos
 const getAllProyects = async (req, res) => {
   try {
-    const { especializacion, alcance, tiempoDeDuracion, fecha } = req.query;
+    const { especializacion, alcance, tiempo_duracion, fecha } = req.query;
 
     const filters = {};
 
@@ -25,8 +26,8 @@ const getAllProyects = async (req, res) => {
     if (alcance) {
       filters.alcance = alcance;
     }
-    if (tiempoDeDuracion) {
-      filters.tiempoDeDuracion = tiempoDeDuracion;
+    if (tiempo_duracion) {
+      filters.tiempo_duracion = tiempo_duracion;
     }
 
     // Ordenar por fecha
@@ -65,16 +66,16 @@ const getProyectById = async (req, res) => {
 };
 
 const getProyectByName = async (req, res) => {
-  const { name } = req.query;
-  console.log(name);
+  const { nombre } = req.query;
+  console.log(nombre);
   try {
     // Si no encuntra el nombre que puse, va a devolver todos los proyectos
-    if (!name) {
+    if (!nombre) {
       const proyects = await proyectRepository.getAllProyects();
       return res.status(200).json(proyects);
     }
 
-    const cleanedName = name.trim(); // Eliminar espacios en blanco q estan de mas
+    const cleanedName = nombre.trim(); // Eliminar espacios en blanco q estan de mas
 
     const proyects = await proyectRepository.getProyectByName(cleanedName);
 
@@ -130,6 +131,25 @@ const deleteProyect = async (req, res) => {
   }
 };
 
+const getProyectsByUserId = async (req, res) => {
+  const userId = req.params.userId; // Esto extrae el ID correctamente
+
+  try {
+    const proyects = await Proyect.find({ usuario: userId }); // Cambia 'userId' por 'usuario'
+
+    if (!proyects.length) {
+      return res
+        .status(404)
+        .json({ message: "No se encontraron proyectos para este usuario" });
+    }
+    res.status(200).json(proyects);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error al obtener proyectos del usuario", error });
+  }
+};
+
 export default {
   getAllProyects,
   getProyectById,
@@ -137,4 +157,5 @@ export default {
   createProyect,
   updateProyect,
   deleteProyect,
+  getProyectsByUserId,
 };

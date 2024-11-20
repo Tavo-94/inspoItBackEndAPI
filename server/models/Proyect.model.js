@@ -18,17 +18,26 @@ const proyectoSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  especializacion: {
-    type: [String], // varias especializaciones (Back - Front- Marketing - IT - Diseño)
-    required: true,
-  },
+  especializacion: [
+    {
+      type: String,
+      enum: ["FrontEnd", "BackEnd", "Marketing Digital", "Diseño UX/UI"], // Opciones fijas
+      required: true,
+    },
+  ],
   alcance: {
     type: String,
+    enum: ["Pequeño", "Mediano", "Grande"], // Opciones fijas
     required: true,
   },
   tiempo_duracion: {
     type: String,
+    enum: ["Urgente", "Corto", "Medio", "Largo"], // Opciones fijas
     required: true,
+  },
+  estado: {
+    type: Boolean,
+    default: true,
   },
   imagenes_urls: {
     type: [String], // Array de URLs de imágenes
@@ -36,7 +45,7 @@ const proyectoSchema = new mongoose.Schema({
   },
   estado: {
     type: Boolean,
-    required: true,
+    default: true,
   },
   fecha: {
     type: Date,
@@ -56,37 +65,36 @@ const proyectoSchema = new mongoose.Schema({
 proyectoSchema.pre("findOneAndDelete", async function (next) {
   const proyect = await this.model.findOne(this.getQuery());
   if (!proyect) {
-    return next();    
+    return next();
   }
 
   await Usuario.findByIdAndUpdate(proyect.usuario, {
     $pull: {
       proyectos: proyect._id,
-    }
-  })
+    },
+  });
 
   next();
-} )
+});
 
 proyectoSchema.post("save", async function (doc, next) {
-    try {
-      // Actualiza el usuario para agregar el proyecto recién creado a su lista de proyectos
-      console.log(doc._id, "Post save,  oid del proyecto");
-      console.log(doc.usuario, "Post save, oid del usuario");
-      await Usuario.findByIdAndUpdate(doc.usuario, {
-        $push: {
-          proyectos: doc._id,
-        },
-      })
-      console.log("Proyecto agregado al usuario");
-      next();
-
-    } catch (error) {
-      // Maneja cualquier error que ocurra durante la actualización del usuario
-      console.error("Error al agregar el proyecto al usuario:", error);
-      next(error);
-    }
-})
+  try {
+    // Actualiza el usuario para agregar el proyecto recién creado a su lista de proyectos
+    console.log(doc._id, "Post save,  oid del proyecto");
+    console.log(doc.usuario, "Post save, oid del usuario");
+    await Usuario.findByIdAndUpdate(doc.usuario, {
+      $push: {
+        proyectos: doc._id,
+      },
+    });
+    console.log("Proyecto agregado al usuario");
+    next();
+  } catch (error) {
+    // Maneja cualquier error que ocurra durante la actualización del usuario
+    console.error("Error al agregar el proyecto al usuario:", error);
+    next(error);
+  }
+});
 
 const Proyecto = mongoose.model("Proyecto", proyectoSchema);
 export default Proyecto;
