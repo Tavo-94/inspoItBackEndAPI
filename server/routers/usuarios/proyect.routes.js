@@ -10,5 +10,6 @@ proyectRouter.get("/search", proyectController.getProyectByName); // Ejemplo htt
 proyectRouter.get("/:id", proyectController.getProyectById); // Obtener proyecto por ID
 proyectRouter.put("/:id", proyectController.updateProyect); // Actualizar proyecto
 proyectRouter.delete("/:id", proyectController.deleteProyect); // Eliminar proyecto
+proyectRouter.get("/user/:userId", proyectController.getProyectsByUserId);
 
 export default proyectRouter;

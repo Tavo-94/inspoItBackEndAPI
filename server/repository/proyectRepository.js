@@ -12,8 +12,10 @@ const getProyectById = async (id) => {
   return await Proyect.findById(id);
 };
 
-const getProyectByName = async (name) => {
-  return await Proyect.find({ name: { $regex: `^${name}`, $options: "i" } });
+const getProyectByName = async (nombre) => {
+  return await Proyect.find({
+    nombre: { $regex: `^${nombre}`, $options: "i" },
+  });
   // $regex busca coincidencia, $options 'i' hace la búsqueda insensible a mayúsculas/minúsculas, ^ para que muestre directamente por 1 letra
 };
 
