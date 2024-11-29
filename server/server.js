@@ -8,6 +8,7 @@ import proyectRouter from "./routers/usuarios/proyect.routes.js";
 import loginRoutes from "./routers/login.routes.js";
 import jsonwebtoken from "jsonwebtoken";
 import tokenVerify from "./routers/tokenValidator.js";
+import emailRouter from "./routers/usuarios/email.routes.js";
 
 //constantes de servidor
 const app = express();
@@ -46,6 +47,7 @@ app.use("/user", userRouter);
 app.use("/proyect", proyectRouter);
 app.use("/login", loginRoutes);
 app.use("/token", tokenVerify);
+app.use("/email", emailRouter);
 
 //iniciar servidor
 

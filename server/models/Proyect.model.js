@@ -56,8 +56,31 @@ const proyectoSchema = new mongoose.Schema({
     ref: "Usuario",
     required: true,
   },
+  email: {
+    type: String, // Este es el campo que vamos a llenar con el correo del creador
+  },
 });
 
+// Middleware para obtener el correo del creador al guardar el proyecto
+proyectoSchema.pre("save", async function (next) {
+  if (this.isNew) {
+    try {
+      // Obtener el usuario (creador del proyecto)
+      const usuario = await Usuario.findById(this.usuario);
+
+      if (usuario) {
+        // Asignar el email del creador al proyecto
+        this.email = usuario.email;
+      }
+
+      next();
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    next();
+  }
+});
 // middleware que se ejecuta antes de eliminar un proyecto
 // este middleware se encarga de eliminar el proyecto de la lista de proyectos
 // del usuario que lo creó
